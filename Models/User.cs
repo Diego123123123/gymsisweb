@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GYM.Models
 {
-    public class User: IdentityUser
+    public class User
     {
         #region User properties
 
