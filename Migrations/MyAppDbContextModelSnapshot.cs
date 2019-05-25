@@ -19,6 +19,23 @@ namespace GYM.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("GYM.Models.Function", b =>
+                {
+                    b.Property<int>("FunctionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("MovieName");
+
+                    b.Property<int>("Room");
+
+                    b.Property<string>("Schedule");
+
+                    b.HasKey("FunctionId");
+
+                    b.ToTable("Functions");
+                });
+
             modelBuilder.Entity("GYM.Models.IdentityClient", b =>
                 {
                     b.Property<string>("Id")
@@ -68,6 +85,23 @@ namespace GYM.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("GYM.Models.Reserva", b =>
+                {
+                    b.Property<int>("ReserveId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AmountOfPeople");
+
+                    b.Property<int>("FunctionId");
+
+                    b.Property<string>("User");
+
+                    b.HasKey("ReserveId");
+
+                    b.ToTable("Reserves");
                 });
 
             modelBuilder.Entity("GYM.Models.User", b =>

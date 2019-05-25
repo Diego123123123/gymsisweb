@@ -9,6 +9,7 @@ using GYM.Repositories.Implementations;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,7 +35,7 @@ namespace GYM.Controllers
             this.myAppDbContext = myAppDbContext;
         }
 
-        [Route("Create")]
+        [Route("users/create")]
         [EnableCors("MyPolicy")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserInfoForSignUp model)
@@ -45,9 +46,19 @@ namespace GYM.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var uid = "";
                     myAppDbContext.Add(new User { Email = model.Email, LastName = model.LastName, Name = model.Name, Password = model.Password });
                     await myAppDbContext.SaveChangesAsync();
-                    return BuildToken(new UserInfo { Email=model.Email, Password=model.Password});
+                    var users = await this._userManager.Users.ToListAsync();
+                    for (int i = 0; i < users.Count; i++)
+                    {
+                        if (users[i].Email == model.Email)
+                        {
+                            uid = users[i].Id;
+                        }
+                    }
+
+                    return BuildToken(new UserInfo { Email=model.Email, Password=model.Password}, uid);
                 }
                 else
                 {
@@ -62,15 +73,25 @@ namespace GYM.Controllers
         }
 
         [HttpPost]
-        [Route("Login")]
+        [EnableCors("MyPolicy")]
+        [Route("users/login")]
         public async Task<IActionResult> Login([FromBody] UserInfo userInfo)
         {
             if (ModelState.IsValid)
             {
+                var uid = "";
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return BuildToken(userInfo);
+                    var users = await this._userManager.Users.ToListAsync();
+                    for (int i = 0; i < users.Count; i++)
+                    {
+                        if (users[i].Email == userInfo.Email)
+                        {
+                            uid = users[i].Id;
+                        }
+                    }
+                    return BuildToken(userInfo, uid);
                 }
                 else
                 {
@@ -84,12 +105,12 @@ namespace GYM.Controllers
             }
         }
 
-        private IActionResult BuildToken(UserInfo userInfo)
+        private IActionResult BuildToken(UserInfo userInfo, string userid)
         {
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
-                new Claim("miValor", "Lo que yo quiera"),
+                new Claim("userid", userid),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

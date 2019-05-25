@@ -2,8 +2,11 @@
 using GYM.Models;
 using GYM.Repositories.Implementations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GYM.Controllers
 {
@@ -14,17 +17,30 @@ namespace GYM.Controllers
 
         private UserRepositoryImpl userRepository;
         private MyAppDbContext myAppDbContext;
+        private readonly UserManager<IdentityClient> _userManager;
+        private readonly SignInManager<IdentityClient> _signInManager;
 
-        public UserController(MyAppDbContext myAppDbContext)
+        public UserController(MyAppDbContext myAppDbContext, UserManager<IdentityClient> userManager
+        ,SignInManager<IdentityClient> signinmanager)
         {
             this.userRepository = new UserRepositoryImpl(myAppDbContext);
             this.myAppDbContext = myAppDbContext;
+            this._signInManager = signinmanager;
+            this._userManager = userManager;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(this.userRepository.GetAll());
+            var users = await this._userManager.Users.ToListAsync();
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].Email == "pp@gmail.com")
+                {
+                    return Ok(users[i]);
+                }
+            }
+            return Ok(users);
         }
 
         [HttpGet("{id}", Name = "UserByID")]

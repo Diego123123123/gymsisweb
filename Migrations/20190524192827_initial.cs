@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GYM.Migrations
 {
-    public partial class intial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,36 @@ namespace GYM.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Functions",
+                columns: table => new
+                {
+                    FunctionId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    MovieName = table.Column<string>(nullable: true),
+                    Schedule = table.Column<string>(nullable: true),
+                    Room = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Functions", x => x.FunctionId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reserves",
+                columns: table => new
+                {
+                    ReserveId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    User = table.Column<string>(nullable: true),
+                    AmountOfPeople = table.Column<int>(nullable: false),
+                    FunctionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reserves", x => x.ReserveId);
                 });
 
             migrationBuilder.CreateTable(
@@ -225,6 +255,12 @@ namespace GYM.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Functions");
+
+            migrationBuilder.DropTable(
+                name: "Reserves");
 
             migrationBuilder.DropTable(
                 name: "Users");
