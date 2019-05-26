@@ -53,9 +53,15 @@ namespace GYM.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult EditUser([FromBody] User user, int id)
+        [EnableCors("MyPolicy")]
+        public IActionResult EditFunction([FromBody] Function function, int id)
         {
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                functionRepository.Update(id, function);
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]

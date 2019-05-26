@@ -1,5 +1,6 @@
 ﻿using GYM.Context;
 using GYM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GYM.Repositories.Implementations
 {
@@ -7,6 +8,12 @@ namespace GYM.Repositories.Implementations
     {
         public FunctionRepository(MyAppDbContext myAppDbContext) : base(myAppDbContext)
         {
+        }
+        public void Update(int id, Function function)
+        {
+            function.FunctionId = id;
+            myAppDbContext.Entry(function).State = EntityState.Modified;
+            this.myAppDbContext.SaveChanges();
         }
 
     }

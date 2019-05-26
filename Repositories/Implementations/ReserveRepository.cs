@@ -1,5 +1,6 @@
 ﻿using GYM.Context;
 using GYM.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,12 @@ namespace GYM.Repositories.Implementations
                 resp.Add(reserve);
             }
             return resp;
+        }
+        public void Update(int id, Reserva reserva)
+        {
+            reserva.ReserveId = id;
+            myAppDbContext.Entry(reserva).State = EntityState.Modified;
+            this.myAppDbContext.SaveChanges();
         }
     }
 }

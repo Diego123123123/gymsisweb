@@ -60,9 +60,15 @@ namespace GYM.Controllers
         }
 
         [HttpPut("{id}")]
+        [EnableCors("MyPolicy")]
         public IActionResult EditUser([FromBody] Reserva reserve, int id)
         {
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                reserveRepository.Update(id, reserve);
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]
