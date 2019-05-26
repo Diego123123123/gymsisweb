@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GYM.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    [Migration("20190505184220_intial")]
-    partial class intial
+    [Migration("20190524192827_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,23 @@ namespace GYM.Migrations
                 .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("GYM.Models.Function", b =>
+                {
+                    b.Property<int>("FunctionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("MovieName");
+
+                    b.Property<int>("Room");
+
+                    b.Property<string>("Schedule");
+
+                    b.HasKey("FunctionId");
+
+                    b.ToTable("Functions");
+                });
 
             modelBuilder.Entity("GYM.Models.IdentityClient", b =>
                 {
@@ -70,6 +87,23 @@ namespace GYM.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("GYM.Models.Reserva", b =>
+                {
+                    b.Property<int>("ReserveId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AmountOfPeople");
+
+                    b.Property<int>("FunctionId");
+
+                    b.Property<string>("User");
+
+                    b.HasKey("ReserveId");
+
+                    b.ToTable("Reserves");
                 });
 
             modelBuilder.Entity("GYM.Models.User", b =>
