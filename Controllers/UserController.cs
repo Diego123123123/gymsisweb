@@ -33,13 +33,6 @@ namespace GYM.Controllers
         public async Task<IActionResult> GetAll()
         {
             var users = await this._userManager.Users.ToListAsync();
-            for (int i = 0; i < users.Count; i++)
-            {
-                if (users[i].Email == "pp@gmail.com")
-                {
-                    return Ok(users[i]);
-                }
-            }
             return Ok(users);
         }
 
