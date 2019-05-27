@@ -32,7 +32,7 @@ namespace GYM.Controllers
 
         [HttpGet]
         [EnableCors("MyPolicy")]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
             var users = this.userRepository.GetAll();
             return Ok(users);

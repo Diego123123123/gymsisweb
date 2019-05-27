@@ -1,5 +1,6 @@
 ﻿using GYM.Context;
 using GYM.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,22 @@ namespace GYM.Repositories.Implementations
             }
             return resp;
         }
+
+        public IEnumerable<UserReserves> GetAllReservas()
+        {
+            var items = this.myAppDbContext.Set<Reserva>().ToList();
+            var resp = new List<UserReserves>();
+            for (int i = 0; i < items.Count(); i++)
+            {
+                var reserve = new UserReserves();
+                reserve.ReserveId = items[i].ReserveId;
+                reserve.AmountOfPeople = items[i].AmountOfPeople;
+                reserve.Function = myAppDbContext.Set<Function>().Where(x => x.FunctionId == items[i].FunctionId).FirstOrDefault();
+                resp.Add(reserve);
+            }
+            return resp;
+        }
+
         public void Update(int id, Reserva reserva)
         {
             reserva.ReserveId = id;

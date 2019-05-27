@@ -2,7 +2,12 @@
 using GYM.Models;
 using GYM.Repositories.Implementations;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GYM.Controllers
 {
@@ -12,11 +17,14 @@ namespace GYM.Controllers
     {
         private ReserveRepository reserveRepository;
         private MyAppDbContext myAppDbContext;
-
-        public ReserveController(MyAppDbContext myAppDbContext)
+        private FunctionRepository functionRepository;
+        private readonly UserManager<IdentityClient> _userManager;
+        public ReserveController(MyAppDbContext myAppDbContext, UserManager<IdentityClient> userManager)
         {
+            this.functionRepository = new FunctionRepository(myAppDbContext);
             this.reserveRepository = new ReserveRepository(myAppDbContext);
             this.myAppDbContext = myAppDbContext;
+            this._userManager = userManager;
         }
 
         [HttpGet]
@@ -24,6 +32,25 @@ namespace GYM.Controllers
         public IActionResult GetAll()
         {
             return Ok(this.reserveRepository.GetAll());
+        }
+
+        [HttpGet]
+        [EnableCors("MyPolicy")]
+        [Route("userreserves")]
+        public async Task<IActionResult> GetUserReserves()
+        {
+            var reserves = this.reserveRepository.GetAll().ToList();
+            var resp = new List<UserReserve>();
+            for (int i = 0; i < reserves.Count; i++)
+            {
+                var us = new UserReserve();
+                us.ReserveId = reserves[i].ReserveId;
+                us.function = this.functionRepository.GetAll().Where(f => f.FunctionId == reserves[i].FunctionId).FirstOrDefault().MovieName;
+                us.amount = reserves[i].AmountOfPeople;
+                us.email = this._userManager.Users.Where(u => u.Id == reserves[i].User).FirstOrDefault().Email;
+                resp.Add(us);
+            }
+            return Ok(resp);
         }
 
         [HttpGet("{id}", Name = "ReservesByUserId")]
