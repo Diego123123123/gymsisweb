@@ -1,6 +1,7 @@
 ﻿using GYM.Context;
 using GYM.Models;
 using GYM.Repositories.Implementations;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,9 +31,10 @@ namespace GYM.Controllers
         }
 
         [HttpGet]
+        [EnableCors("MyPolicy")]
         public async Task<IActionResult> GetAll()
         {
-            var users = await this._userManager.Users.ToListAsync();
+            var users = this.userRepository.GetAll();
             return Ok(users);
         }
 
